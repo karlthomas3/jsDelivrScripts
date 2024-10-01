@@ -4,8 +4,6 @@
 	// Configuration
 	const MAX_ATTEMPTS = 20;
 	const CHECK_INTERVAL = 100; // milliseconds
-	const REDIRECT_URL =
-		'https://jobs.disabilitytalent.org/redirect-script-test';
 
 	// Function to get a query parameter by name
 	function getQueryParam(name) {
@@ -29,11 +27,12 @@
 	function constructRedirectUrl() {
 		const targetUrl = getQueryParam('url');
 		const clickId = getCookie('rtkclickid-store');
-		return targetUrl
-			? `${REDIRECT_URL}?url=${encodeURIComponent(
-					targetUrl
-			  )}&clickid=${clickId}`
-			: `${REDIRECT_URL}?clickid=${clickId}`;
+		if (targetUrl) {
+			const url = new URL(targetUrl);
+			url.searchParams.append('clickid', clickId);
+			return url.toString();
+		}
+		return null;
 	}
 
 	// Function to check RedTrack completion and redirect
@@ -41,9 +40,13 @@
 		if (isRedTrackComplete()) {
 			console.log('RedTrack ClickID set. Redirecting...');
 			const finalRedirectUrl = constructRedirectUrl();
-			alert(`Redirecting to: ${finalRedirectUrl}`);
-			console.log(`Redirecting to: ${finalRedirectUrl}`);
-			window.location.href = finalRedirectUrl;
+			if (finalRedirectUrl) {
+				alert(`Redirecting to: ${finalRedirectUrl}`);
+				console.log(`Redirecting to: ${finalRedirectUrl}`);
+				window.location.href = finalRedirectUrl;
+			} else {
+				console.error('Target URL is missing.');
+			}
 		} else if (attempts < MAX_ATTEMPTS) {
 			console.log(
 				`Waiting for RedTrack ClickID. Attempt ${
@@ -56,9 +59,13 @@
 				'RedTrack ClickID not set in time. Redirecting anyway...'
 			);
 			const finalRedirectUrl = constructRedirectUrl();
-			alert(`Redirecting to: ${finalRedirectUrl}`);
-			console.log(`Redirecting to: ${finalRedirectUrl}`);
-			window.location.href = finalRedirectUrl;
+			if (finalRedirectUrl) {
+				alert(`Redirecting to: ${finalRedirectUrl}`);
+				console.log(`Redirecting to: ${finalRedirectUrl}`);
+				window.location.href = finalRedirectUrl;
+			} else {
+				console.error('Target URL is missing.');
+			}
 		}
 	}
 
