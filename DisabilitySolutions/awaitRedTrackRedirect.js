@@ -4,6 +4,7 @@
 	// Configuration
 	const MAX_ATTEMPTS = 20;
 	const CHECK_INTERVAL = 100; // milliseconds
+	const FALLBACK_URL = 'https://jobs.disabilitytalent.org'; // Fallback URL if 'url' is missing
 
 	// Function to get a query parameter by name
 	function getQueryParam(name) {
@@ -25,14 +26,29 @@
 
 	// Function to construct the final redirect URL
 	function constructRedirectUrl() {
-		const targetUrl = getQueryParam('url');
+		let targetUrl = getQueryParam('url') || FALLBACK_URL;
 		const clickId = getCookie('rtkclickid-store');
-		if (targetUrl) {
-			const url = new URL(targetUrl);
-			url.searchParams.append('clickid', clickId);
-			return url.toString();
+
+		if (!clickId) {
+			console.warn('RedTrack ClickID is missing.');
 		}
-		return null;
+
+		// Ensure the targetUrl is a valid URL
+		if (!/^https?:\/\//i.test(targetUrl)) {
+			targetUrl = 'http://' + targetUrl;
+		}
+
+		try {
+			const url = new URL(targetUrl);
+			url.searchParams.append(
+				'clickid',
+				encodeURIComponent(clickId || '')
+			);
+			return url.toString();
+		} catch (error) {
+			console.error('Invalid target URL:', targetUrl);
+			return null;
+		}
 	}
 
 	// Function to check RedTrack completion and redirect
@@ -41,11 +57,10 @@
 			console.log('RedTrack ClickID set. Redirecting...');
 			const finalRedirectUrl = constructRedirectUrl();
 			if (finalRedirectUrl) {
-				alert(`Redirecting to: ${finalRedirectUrl}`);
 				console.log(`Redirecting to: ${finalRedirectUrl}`);
 				window.location.href = finalRedirectUrl;
 			} else {
-				console.error('Target URL is missing.');
+				console.error('Unable to construct redirect URL.');
 			}
 		} else if (attempts < MAX_ATTEMPTS) {
 			console.log(
@@ -60,11 +75,10 @@
 			);
 			const finalRedirectUrl = constructRedirectUrl();
 			if (finalRedirectUrl) {
-				alert(`Redirecting to: ${finalRedirectUrl}`);
 				console.log(`Redirecting to: ${finalRedirectUrl}`);
 				window.location.href = finalRedirectUrl;
 			} else {
-				console.error('Target URL is missing.');
+				console.error('Unable to construct redirect URL.');
 			}
 		}
 	}
