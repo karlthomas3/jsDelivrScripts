@@ -6,6 +6,12 @@
 	const CHECK_INTERVAL = 100; // milliseconds
 	const REDIRECT_URL = 'https://jobs.disabilitytalent.org/offer-test';
 
+	// Function to get a query parameter by name
+	function getQueryParam(name) {
+		const urlParams = new URLSearchParams(window.location.search);
+		return urlParams.get(name);
+	}
+
 	// Function to check if RedTrack has set the ClickID cookie
 	function isRedTrackComplete() {
 		return !!getCookie('rtkclickid-store');
@@ -22,7 +28,11 @@
 	function checkAndRedirect(attempts = 0) {
 		if (isRedTrackComplete()) {
 			console.log('RedTrack ClickID set. Redirecting...');
-			window.location.href = REDIRECT_URL;
+			const targetUrl = getQueryParam('url');
+			const finalRedirectUrl = targetUrl
+				? `${REDIRECT_URL}?url=${encodeURIComponent(targetUrl)}`
+				: REDIRECT_URL;
+			window.location.href = finalRedirectUrl;
 		} else if (attempts < MAX_ATTEMPTS) {
 			console.log(
 				`Waiting for RedTrack ClickID. Attempt ${
@@ -34,7 +44,11 @@
 			console.warn(
 				'RedTrack ClickID not set in time. Redirecting anyway...'
 			);
-			window.location.href = REDIRECT_URL;
+			const targetUrl = getQueryParam('url');
+			const finalRedirectUrl = targetUrl
+				? `${REDIRECT_URL}?url=${encodeURIComponent(targetUrl)}`
+				: REDIRECT_URL;
+			window.location.href = finalRedirectUrl;
 		}
 	}
 
