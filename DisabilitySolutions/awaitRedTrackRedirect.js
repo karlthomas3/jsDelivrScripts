@@ -4,7 +4,8 @@
 	// Configuration
 	const MAX_ATTEMPTS = 20;
 	const CHECK_INTERVAL = 100; // milliseconds
-	const REDIRECT_URL = 'https://jobs.disabilitytalent.org/offer-test';
+	const REDIRECT_URL =
+		'https://jobs.disabilitytalent.org/redirect-script-test';
 
 	// Function to get a query parameter by name
 	function getQueryParam(name) {
@@ -54,7 +55,7 @@
 				'RedTrack ClickID not set in time. Redirecting anyway...'
 			);
 			const finalRedirectUrl = constructRedirectUrl();
-			console.log(`Redirecting to: ${finalRedirectUrl}`);
+			alert(`Redirecting to: ${finalRedirectUrl}`);
 			window.location.href = finalRedirectUrl;
 		}
 	}
