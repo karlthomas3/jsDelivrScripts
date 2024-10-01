@@ -24,17 +24,22 @@
 		if (parts.length === 2) return parts.pop().split(';').shift();
 	}
 
+	// Function to construct the final redirect URL
+	function constructRedirectUrl() {
+		const targetUrl = getQueryParam('url');
+		const clickId = getCookie('rtkclickid-store');
+		return targetUrl
+			? `${REDIRECT_URL}?url=${encodeURIComponent(
+					targetUrl
+			  )}&clickid=${clickId}`
+			: `${REDIRECT_URL}?clickid=${clickId}`;
+	}
+
 	// Function to check RedTrack completion and redirect
 	function checkAndRedirect(attempts = 0) {
 		if (isRedTrackComplete()) {
 			console.log('RedTrack ClickID set. Redirecting...');
-			const targetUrl = getQueryParam('url');
-			const clickId = getCookie('rtkclickid-store');
-			const finalRedirectUrl = targetUrl
-				? `${REDIRECT_URL}?url=${encodeURIComponent(
-						targetUrl
-				  )}&clickid=${clickId}`
-				: `${REDIRECT_URL}?clickid=${clickId}`;
+			const finalRedirectUrl = constructRedirectUrl();
 			console.log(`Redirecting to: ${finalRedirectUrl}`);
 			window.location.href = finalRedirectUrl;
 		} else if (attempts < MAX_ATTEMPTS) {
@@ -48,13 +53,7 @@
 			console.warn(
 				'RedTrack ClickID not set in time. Redirecting anyway...'
 			);
-			const targetUrl = getQueryParam('url');
-			const clickId = getCookie('rtkclickid-store');
-			const finalRedirectUrl = targetUrl
-				? `${REDIRECT_URL}?url=${encodeURIComponent(
-						targetUrl
-				  )}&clickid=${clickId}`
-				: `${REDIRECT_URL}?clickid=${clickId}`;
+			const finalRedirectUrl = constructRedirectUrl();
 			console.log(`Redirecting to: ${finalRedirectUrl}`);
 			window.location.href = finalRedirectUrl;
 		}
