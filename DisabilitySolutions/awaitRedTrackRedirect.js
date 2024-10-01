@@ -4,7 +4,7 @@
 	// Configuration
 	const MAX_ATTEMPTS = 20;
 	const CHECK_INTERVAL = 100; // milliseconds
-	const REDIRECT_URL = 'jobs.disabilitytalent.org/offer-test';
+	const REDIRECT_URL = 'https://jobs.disabilitytalent.org/offer-test';
 
 	// Function to check if RedTrack has set the ClickID cookie
 	function isRedTrackComplete() {
