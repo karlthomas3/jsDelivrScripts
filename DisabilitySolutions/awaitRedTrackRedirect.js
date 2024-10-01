@@ -41,6 +41,7 @@
 		if (isRedTrackComplete()) {
 			console.log('RedTrack ClickID set. Redirecting...');
 			const finalRedirectUrl = constructRedirectUrl();
+			alert(`Redirecting to: ${finalRedirectUrl}`);
 			console.log(`Redirecting to: ${finalRedirectUrl}`);
 			window.location.href = finalRedirectUrl;
 		} else if (attempts < MAX_ATTEMPTS) {
@@ -56,6 +57,7 @@
 			);
 			const finalRedirectUrl = constructRedirectUrl();
 			alert(`Redirecting to: ${finalRedirectUrl}`);
+			console.log(`Redirecting to: ${finalRedirectUrl}`);
 			window.location.href = finalRedirectUrl;
 		}
 	}
