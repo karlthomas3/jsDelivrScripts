@@ -1,11 +1,9 @@
-/** @format */
-
 (function () {
 	// Configuration
 	const MAX_ATTEMPTS = 20;
 	const CHECK_INTERVAL = 100; // milliseconds
 	const FALLBACK_URL = "https://www.genzjobs.com"; // Fallback URL if 'url' is missing
-	const excludeParams = "c22";
+	const excludeParams = "c22_";
 
 	// Function to get a query parameter by name
 	function getQueryParam(name) {
@@ -40,12 +38,13 @@
 		}
 
 		try {
-			const originalUrl = new URL(targetUrl);
+			const originalUrl = new URL(window.location.href);
+			console.log("Original url:", originalUrl.toString());
 			const finalUrl = new URL(targetUrl);
 
 			// Preserve the original query parameters, skipping excludeParams
 			originalUrl.searchParams.forEach((value, key) => {
-				if (!key.startsWith(excludeParams)) {
+				if (!key.startsWith(excludeParams) && key != "url") {
 					finalUrl.searchParams.append(key, value);
 				}
 			});
@@ -55,6 +54,7 @@
 				"clickid",
 				encodeURIComponent(clickId || ""),
 			);
+			console.log("Final URL:", finalUrl.toString());
 			return finalUrl.toString();
 		} catch (error) {
 			console.error("Invalid target URL:", targetUrl);
@@ -77,7 +77,10 @@
 			console.log(
 				`Waiting for RedTrack ClickID. Attempt ${attempts + 1}/${MAX_ATTEMPTS}`,
 			);
-			setTimeout(() => checkAndRedirect(attempts + 1), CHECK_INTERVAL);
+			setTimeout(
+				() => checkAndRedirect(attempts + 1),
+				CHECK_INTERVAL,
+			);
 		} else {
 			console.warn(
 				"RedTrack ClickID not set in time. Redirecting anyway...",
