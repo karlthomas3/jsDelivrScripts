@@ -27,6 +27,7 @@
 	function constructRedirectUrl() {
 		let targetUrl = getQueryParam("url") || FALLBACK_URL;
 		const clickId = getCookie("rtkclickid-store");
+		const rx_p = clickId;
 
 		if (!clickId) {
 			console.warn("RedTrack ClickID is missing.");
@@ -54,6 +55,12 @@
 				"clickid",
 				encodeURIComponent(clickId || ""),
 			);
+			// Append rx_p
+			finalUrl.searchParams.append(
+				"rx_p",
+				encodeURIComponent(rx_p || ""),
+			);
+
 			console.log("Final URL:", finalUrl.toString());
 			return finalUrl.toString();
 		} catch (error) {
